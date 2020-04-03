@@ -1,19 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators.dummy_operator import DummyOperator
+# from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash_operator import BashOperator
 import sys
-# sys.path.insert(1, '/home/vailairflowVM/airflowproc/scripts/ltr')
-# sys.path.insert(1, '/home/vailairflowVM/airflowproc/scripts/ltr/files')
-from airflow.models import Variable
-from azure_dump import *
-from dataprep import *
-from model import *
-from invoke import *
-from snowflakeconnect import *
-from utils import *
-from datetime import timedelta
+sys.path.insert(1, '/usr/local/airflow/ltr')
+sys.path.insert(1, '/usr/local/airflow/ltr/files')
+# from invoke import *
+
 
 LTR_DEFAULT_ARGS = {
 #    'owner': 'Jermey "the big man" Demlow aka Office Linebacker',
@@ -32,9 +26,12 @@ dag = DAG('ltr_dag',
 
 set_env = BashOperator(
     task_id='set_up_environment',
-    bash_command=f'source ${Variable.get('LTR_HOME')}/files/set_up.sh ',
-    dag=dag,
+    bash_command=f'source /usr/local/airflow/ltr/files/set_up.sh ',
+    dag=dag
 )
+
+def main():
+    pass 
 
 run_model = PythonOperator(
         task_id ='Invoke',
@@ -42,5 +39,3 @@ run_model = PythonOperator(
         dag=dag)
 
 set_env >> run_model
-
- 

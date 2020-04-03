@@ -74,13 +74,44 @@ RUN set -ex \
         /usr/share/doc-base
 
 COPY script/entrypoint.sh /entrypoint.sh
-# jeremy added
-COPY dags/ltr_dag.py ${AIRFLOW_USER_HOME}/dags
+#Take Dags From Dag Folder For Docker
+COPY dags/ltr_dag.py ${AIRFLOW_USER_HOME}/dags/ltr_dag.py
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
+#Take Project Scripts For Docker
+COPY ltr ${AIRFLOW_USER_HOME}/ltr/
+
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
-# jeremy added
-RUN export LTR_HOME=${AIRFLOW_USER_HOME}/scripts/ltr
+#Set Airflow Enviornment Variable 
+RUN export LTR_HOME=${AIRFLOW_USER_HOME}/ltr
+
+#Setting up Miniconda on Docker For ML Projects
+# ENV PATH="/root/miniconda3/bin:${PATH}"
+# ARG PATH="/root/miniconda3/bin:${PATH}"
+
+# ENV PATH="/opt/conda/bin:$PATH"
+# ARG PATH="/opt/conda/bin:$PATH"
+
+# ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+# ENV PATH /opt/conda/bin:$PATH
+
+# RUN apt-get update --fix-missing && \
+#     apt-get install -y wget bzip2 ca-certificates curl git && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
+# RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O ~/miniconda.sh && \
+#     /bin/bash ~/miniconda.sh  && \
+#     rm ~/miniconda.sh && \
+#     /opt/conda/bin/conda clean -tipsy && \
+#     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+#     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+#     echo "conda activate" >> ~/.bashrc
+    
+
+
+# RUN /bin/bash -c "source ~/.bashrc"
+# RUN bash ${AIRFLOW_USER_HOME}/ltr/files/set_up.sh
 
 EXPOSE 8080 5555 8793
 
