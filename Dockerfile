@@ -74,13 +74,18 @@ RUN set -ex \
         /usr/share/doc-base
 
 COPY script/entrypoint.sh /entrypoint.sh
+# jeremy added
+COPY dags/ltr_dag.py ${AIRFLOW_USER_HOME}/dags
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
+# jeremy added
+RUN export LTR_HOME=${AIRFLOW_USER_HOME}/scripts/ltr
 
 EXPOSE 8080 5555 8793
 
 USER airflow
 WORKDIR ${AIRFLOW_USER_HOME}
 ENTRYPOINT ["/entrypoint.sh"]
+
 CMD ["webserver"]
